@@ -8,4 +8,5 @@ export const env = cleanEnv(process.env, {
     choices: ["development", "production", "test"],
     default: "development",
   }),
+  MONGO_URI: str(),
 });
