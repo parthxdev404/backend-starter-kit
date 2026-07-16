@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import { cleanEnv, port, str } from "envalid";
 import "dotenv/config";
 
