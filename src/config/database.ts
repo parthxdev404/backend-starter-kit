@@ -7,6 +7,20 @@ const RETRY_DELAY = 5000;
 
 const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
 
+const registerConnectionEvents = (): void => {
+  mongoose.connection.on("disconnected", () => {
+    logger.warn("MongoDB disconnected");
+  });
+
+  mongoose.connection.on("reconnected", () => {
+    logger.info("MongoDB reconnected");
+  });
+
+  mongoose.connection.on("error", (error) => {
+    logger.error({ err: error }, "MongoDB connection error");
+  });
+};
+
 export const connectDatabase = async (): Promise<void> => {
   let attempt = 1;
 
@@ -17,24 +31,15 @@ export const connectDatabase = async (): Promise<void> => {
         maxPoolSize: 10,
       });
 
+      registerConnectionEvents();
+
       logger.info("MongoDB connected successfully");
-
-      mongoose.connection.on("disconnected", () => {
-        logger.warn("MongoDB disconnected");
-      });
-
-      mongoose.connection.on("reconnected", () => {
-        logger.info("MongoDB reconnected");
-      });
-
-      mongoose.connection.on("error", (error) => {
-        logger.error({ err: error }, "MongoDB connection error");
-      });
 
       return;
     } catch (error) {
       logger.warn(
         {
+          err: error,
           attempt,
           maxRetries: MAX_RETRIES,
         },
@@ -49,12 +54,19 @@ export const connectDatabase = async (): Promise<void> => {
 
       attempt++;
 
+      logger.info({ retryIn: `${RETRY_DELAY / 1000}s` }, "Retrying MongoDB connection...");
+
       await sleep(RETRY_DELAY);
     }
   }
 };
 
 export const disconnectDatabase = async (): Promise<void> => {
+  if (mongoose.connection.readyState === 0) {
+    logger.info("MongoDB is already disconnected");
+    return;
+  }
+
   try {
     await mongoose.connection.close();
 

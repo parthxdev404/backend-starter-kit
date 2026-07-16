@@ -1,0 +1,43 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+
+    container_name: backend-starter
+
+    env_file:
+      - .env.docker
+
+    ports:
+      - "5000:5000"
+
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+    command: npm run dev
+
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:6
+
+    container_name: mongodb
+
+    ports:
+      - "27017:27017"
+
+    volumes:
+      - mongo-data:/data/db
+
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:
