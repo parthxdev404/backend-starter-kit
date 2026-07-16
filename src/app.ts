@@ -1,11 +1,10 @@
-import express from 'express'
+import express from "express";
+import healthRoutes from "./routes/health.routes";
 
 const app = express();
 
-app.use("/health",(_,res)=>{
-    res.json({
-        message : "Server is running"
-    })
-})
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use("/", healthRoutes);
 
-export default app
+export default app;
