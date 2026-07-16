@@ -12,19 +12,19 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-     "docker:dev": "docker compose -f docker-compose.dev.yml up --build",
+    "docker:dev": "docker compose -f docker-compose.dev.yml up --build",
     "docker:prod": "docker compose -f docker-compose.prod.yml up --build",
     "docker:down": "docker compose down"
   },
   "keywords": [
-  "express",
-  "typescript",
-  "backend",
-  "starter",
-  "docker",
-  "mongodb",
-  "nodejs"
-],
+    "express",
+    "typescript",
+    "backend",
+    "starter",
+    "docker",
+    "mongodb",
+    "nodejs"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
